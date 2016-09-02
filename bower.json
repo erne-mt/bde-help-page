@@ -1,0 +1,23 @@
+{
+  "name": "bde-help-page",
+  "authors": [
+    "Erik Neute <erik.neute@hm-ag.de>"
+  ],
+  "description": "Dialog with navigation",
+  "main": "bde-help-page.html",
+  "keywords": [
+    "bde",
+    "polymer-elements",
+    "cubbles"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

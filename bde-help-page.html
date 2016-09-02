@@ -1,0 +1,296 @@
+<!--
+TODO's:
+(ene) TODO: use iron-localstorage on property instead of using it directly
+(ene) TODO: solve problem of iron-component-page and devided html/js, than include api-reference
+(ene) TODO: i18n  -> app-localize-behavior
+(ene) TODO: add icons for the interactions
+-->
+
+<link rel="import" href="../../vendor/polymer/polymer.html">
+<link rel="import" href="../../vendor/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../vendor/iron-pages/iron-pages.html">
+<link rel="import" href="../../vendor/iron-selector/iron-selector.html">
+<link rel="import" href="../../vendor/iron-a11y-keys/iron-a11y-keys.html">
+<link rel="import" href="../../vendor/paper-button/paper-button.html">
+<link rel="import" href="../../vendor/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../vendor/paper-fab/paper-fab.html">
+<link rel="import" href="../../vendor/paper-material/paper-material.html">
+<link rel="import" href="../../vendor/neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="../../vendor/neon-animation/animations/fade-in-animation.html">
+
+<!--
+A page dialog component used for documentation and tutorials.
+
+On first start of the app, the dialog is shown, to inform the user about the features of the BDE.
+
+On localstorage a value is set, to indicate, that the app was already opened, so the dialog would be prevented from opening on every start-up.
+
+Example:
+
+    <bde-help-page></bde-help-page>
+
+@group BDE Custom Elements
+@hero hero.svg
+@element bde-help-page
+-->
+
+<dom-module id="bde-help-page">
+  <template>
+    <style include="iron-flex">
+
+      :host {
+        display: block;
+      }
+
+      #bdeTut {
+        height: 100px;
+        padding-bottom: 15px;
+      }
+
+      #helpHeader {
+        background-color: var(--paper-cyan-600);
+        text-align: center;
+        padding: 5px;
+      }
+
+      #helpMain {
+        text-align: center;
+        padding: 5px;
+      }
+
+      #paginator {
+        @apply(--layout-horizontal);
+        justify-content: center;
+      }
+
+      .helpDrawer {
+        background-color: #f5f5f5;
+        padding: 5px;
+      }
+
+      .miniHelpFab {
+        display: inline-block;
+      }
+
+      .miniHelpSideFab {
+        display: inline-block;
+        background-color: var(--paper-grey-100);
+        color: black;
+      }
+
+      .miniHelpToolFab {
+        display: inline-block;
+        background-color: var(--paper-cyan-600);
+      }
+
+      .dot {
+        background-color: var(--paper-cyan-600);
+        width: 12px;
+        height: 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        margin: 5px;
+        z-index: 100;
+      }
+
+      .dot.iron-selected {
+        background-color: var(--accent-color);
+      }
+
+      paper-dialog {
+        /*min-width: 200px;*/
+        /*min-height: 150px;*/
+        @apply(--layout-vertical);
+      }
+
+      paper-icon-button->iron-icon {
+        background-color: var(--paper-cyan-600);
+      }
+
+      li {
+        margin: 5px;
+      }
+
+    </style>
+
+    <paper-dialog id="dialog" opened="{{opened}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation" with-backdrop>
+
+      <iron-a11y-keys keys="left" on-keys-pressed="decrement"></iron-a11y-keys>
+      <iron-a11y-keys keys="right" on-keys-pressed="increment"></iron-a11y-keys>
+
+          <iron-pages id="helpPages" selected="{{_selectedHelpPage}}">
+            <div>
+              <h2>
+                Welcome to Cubbles <b>B</b>rowser based <b>D</b>evelopment <b>E</b>nvironment!
+              </h2>
+              <p>
+                You can use the BDE to compose Cubble components and compounds to build running applications.
+              </p>
+                  <div id="bdeTut" class="vertical layout flex">
+                    <paper-material elevation="1">
+                      <div id="helpHeader">Header - TOOLBAR</div>
+                    </paper-material>
+                    <div class="horizontal layout flex" >
+                      <paper-material class="helpDrawer" elevation="1">
+                        <div >Webpackage - EXPLORER</div>
+                      </paper-material>
+                      <paper-material elevation="1" id="helpMain" class="flex">
+                        <div>MAIN WINDOW - EDITOR</div>
+                      </paper-material>
+                      <paper-material class="helpDrawer" elevation="1">
+                        <div>Component - PROPERTY EDITOR</div>
+                      </paper-material>
+                    </div>
+                  </div>
+
+                <li> On the left you can explore the components in the project, in the center you can compose the components, on the right (in a sidebar) you can modify the components in the project.</li>
+                <li>The <b>Webpackage</b> represents the current project. It can contain <i>applications</i>, <i>compounds</i>, <i>elementaries</i>, <i>utilities</i>.</li>
+                <li><b>Compounds</b> contain <i><b>member</b></i>, which are also Cubble components.</li>
+            </div>
+            <div>
+              <h2>
+                Starting a new project
+              </h2>
+              <p>After the BDE application is loaded, a new webpackage is default.</p>
+              <li><b>Create a new project</b> by clicking <paper-fab class="miniHelpToolFab" mini icon="editor:insert-drive-file"></paper-fab> on the upper left toolbar.</li>
+                <li><b>Edit the metadata</b> of the current project by clicking the <paper-fab class="miniHelpSideFab" mini icon="icons:settings"></paper-fab> right beside the name in the left sidebar.</li>
+                <li>Set <b>general author information</b> of the current project (name and email).</li>
+                <li><b>Load compounds</b> from the base via <paper-fab class="miniHelpToolFab" mini icon="icons:cloud-download"></paper-fab> in the upper left toolbar.</li>
+                <li><b>Add Cubble components</b> from the base via <paper-fab class="miniHelpFab" mini icon="add"></paper-fab> in the lower right corner.</li>
+                <p></p>
+                <li>Now the components can be modified visually to create new Cubble components.</li>
+                <!-- (ene) TODO: add icons to show the interaction -->
+            </div>
+            <div>
+              <h2>
+                Visual manipulation of Cubble components
+              </h2>
+                <!-- (ene) TODO: add icons for the interactions -->
+                <li>Components can be arranged with the cursor (<b>drag-and-drop</b>).</li>
+                <li>Connections between components can be established by <b>click-and-hold</b> on the slots of the respective components.</li>
+                <li>Alternatively call a context menu via <b>right mouse button</b>.</li>
+                <li>Via <b>mouse-wheel</b> the zoom-level can be changed.</li>
+            </div>
+            <div>
+              <h2>
+                Views in a BDE project
+              </h2>
+              <p>
+                In the upper right in the toolbar you find the buttons for changing the current view in the BDE project window
+              </p>
+                <li><paper-fab class="miniHelpToolFab" mini icon="icons:gesture"></paper-fab> <b>dataflow-view</b> for manipulation of components, connections, initial-values, etc. (default on start of the BDE)</li>
+                <li><paper-fab class="miniHelpToolFab" mini icon="icons:open-with"></paper-fab> <b>design-view</b> for the arrangement of components on application level.</li>
+                <li><paper-fab class="miniHelpToolFab" mini icon="icons:apps"></paper-fab> <b>application-view</b> for displaying a runnable version of the created webpackage in the BDE.</li>
+            </div>
+            <div>
+              <h2>Arrangement of the project</h2>
+              <h3>Zoom-to-fit</h3>
+                <li>Centering all components via <paper-fab class="miniHelpFab" mini icon="icons:aspect-ratio"></paper-fab></li>
+              <h3>Auto-layout</h3>
+                <li>Arrange all components and connections automatically by pressing <paper-fab class="miniHelpFab" mini icon="bde:magic-wand"></paper-fab></li>
+            </div>
+
+            <!-- (ene) TODO: include after documentation -->
+            <!-- <div>
+              <p>
+                Developer documentation
+              </p>
+                <div>
+                  The BDE API documentation can be found here:
+                </div>
+                  <li><a href="/test/documentation.html">documentation</a></li>
+            </div> -->
+
+          </iron-pages>
+
+      <iron-selector id="paginator" selected = "{{_selectedHelpPage}}">
+        <template is="dom-repeat" items="{{_helpPages}}">
+          <div class = "dot"></div>
+        </template>
+      </iron-selector>
+
+      <div class="buttons">
+        <paper-button dialog-confirm>Close</paper-button>
+      </div>
+
+    </paper-dialog>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'bde-help-page',
+
+      properties: {
+
+        /**
+         * Opened Binding, to be accessed from the app
+         * @type {Boolean}
+         * @property {opened}
+         */
+        opened: {
+          type: Boolean,
+          value: false
+        },
+
+        /**
+         * Init value for the selected help page
+         * @type {Number}
+         * @property {_selectedHelpPage}
+         */
+        _selectedHelpPage: {
+          type: Number,
+          value: 0
+        },
+
+        /**
+         * Helper function to determine the number of pages in the dialog, which can be selected.
+         *
+         * @type {Array}
+         * @return {Array} Array of children of the iron-pages element
+         * @property {_helpPages}
+         */
+        _helpPages : {
+          type : Array,
+          value : function () {
+            var helpPages = Array.from(this.$.helpPages.children);
+            return helpPages;
+          }
+        }
+
+    },
+      /**
+       * Polymer attached function. Sets the 'startupTutorial' value on app-start, otherwise checks if the value is set.
+       *
+       * @method {attached}
+       */
+      attached: function() {
+
+        if (localStorage.getItem('startupTutorial') == 'done') {
+          return;
+        } else {
+          this.opened = true;
+          localStorage.setItem('startupTutorial', 'done')
+        }
+      },
+
+      /**
+       * Decreases the iron-pages selector on left arrow button hit.
+       *
+       * @method {decrement}
+       */
+      decrement: function() {
+        this._selectedHelpPage > 0 ? this._selectedHelpPage-- : this._selectedHelpPage = 0;
+      },
+
+      /**
+       * Increases the iron-pages selector on right arrow button hit.
+       *
+       * @method {increment}
+       */
+      increment: function() {
+        this._selectedHelpPage < this._helpPages.length-1 ? this._selectedHelpPage++ : this._selectedHelpPage = this._helpPages.length-1;
+      }
+    });
+  </script>
+</dom-module>
